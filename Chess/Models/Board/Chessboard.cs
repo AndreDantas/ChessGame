@@ -38,13 +38,18 @@ namespace Chess.Models.Board
             foreach (var piece in other.RemovedPieces.Reverse())
                 RemovedPieces.Push(piece.Clone());
 
-            BoardState = new BoardState(Width, Height);
-            for (int i = 0; i < BoardState.Width; i++)
+            BoardState = new BoardState(other.BoardState);
+        }
+
+        public Chessboard(BoardState boardState)
+        {
+            if (boardState == null)
+                BoardState = new BoardState(Width, Height);
+            else
             {
-                for (int j = 0; j < BoardState.Height; j++)
-                {
-                    BoardState[i, j] = new Tile(other.BoardState[i, j]);
-                }
+                BoardState = new BoardState(boardState);
+                Width = boardState.Width;
+                Height = boardState.Height;
             }
         }
 
@@ -108,7 +113,7 @@ namespace Chess.Models.Board
             return null;
         }
 
-        public List<Piece> GetAllPieces()
+        public List<Piece> GetAllPieces(Player player = default)
         {
             var pieces = new List<Piece>();
 
@@ -118,7 +123,7 @@ namespace Chess.Models.Board
                 {
                     var piece = BoardState[i, j].Piece;
 
-                    if (piece != null)
+                    if (piece != null && (piece.Player == player || string.IsNullOrEmpty(player.Id)))
                         pieces.Add(piece);
                 }
             }
@@ -126,17 +131,40 @@ namespace Chess.Models.Board
             return pieces;
         }
 
-        public Dictionary<Piece, List<Move>> GetAllMoves()
+        public Dictionary<Piece, List<Move>> GetAllMoves(Player player = default)
         {
             var movesDict = new Dictionary<Piece, List<Move>>();
-            var pieces = GetAllPieces();
+            var pieces = GetAllPieces(player);
 
             foreach (var piece in pieces)
             {
-                movesDict[piece] = piece.GetMoves(this);
+                var moves = piece.GetMoves(this);
+
+                if (moves.Count != 0)
+                    movesDict[piece] = moves;
             }
 
             return movesDict;
+        }
+
+        public bool IsKingInCheck(Player opposingPlayer)
+        {
+            var movesDict = GetAllMoves(opposingPlayer);
+
+            foreach (var dict in movesDict)
+            {
+                foreach (var move in dict.Value)
+                {
+                    foreach (var capture in move.Captures)
+                    {
+                        var tile = GetTile(capture);
+                        if (tile.Piece is King)
+                            return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         public override bool Equals(object obj)

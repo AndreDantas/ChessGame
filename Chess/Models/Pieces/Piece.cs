@@ -12,6 +12,7 @@ namespace Chess.Models.Pieces
         /// <summary>
         /// Piece's name
         /// </summary>
+        /// <inheritdoc/>
         public abstract string Name { get; }
 
         private int moveCount;
@@ -38,6 +39,12 @@ namespace Chess.Models.Pieces
             MoveCount = moveCount;
         }
 
+        /// <summary>
+        /// Internal function to calculate all possible moves of this piece. Doesn't remove moves that leave the King in Check.
+        /// </summary>
+        /// <param name="Board"></param>
+        /// <returns></returns>
+        /// <inheritdoc/>
         protected abstract List<Move> CalculateMoves(Chessboard Board);
 
         public abstract Piece Clone();
@@ -60,8 +67,8 @@ namespace Chess.Models.Pieces
             {
                 StartPosition = this.CurrentPosition,
                 EndPosition = endPosition,
-                Captures = captures,
-                ExtraMoves = extraMoves
+                Captures = captures ?? new List<Position>(),
+                ExtraMoves = extraMoves ?? new List<Move>()
             };
         }
 
@@ -83,7 +90,7 @@ namespace Chess.Models.Pieces
                    Player.Equals(piece.Player) &&
                    MoveCount == piece.MoveCount;
         }
-
+        
         public override int GetHashCode()
         {
             int hashCode = -1300823941;
@@ -92,6 +99,11 @@ namespace Chess.Models.Pieces
             hashCode = hashCode * -1521134295 + Player.GetHashCode();
             hashCode = hashCode * -1521134295 + MoveCount.GetHashCode();
             return hashCode;
+        }
+
+        public override string ToString()
+        {
+            return $"{Name} {CurrentPosition}";
         }
     }
 }

@@ -12,17 +12,22 @@ using Chess.Models.Pieces;
 using Chess.Serialization;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 
 namespace ChessTest
 {
     public class ChessboardTest
     {
         private Chessboard empty_2x2_board;
+        private DefaultChessConfiguration chess_config;
+        private DefaultChessLoader loader;
 
         [SetUp]
         public void Setup()
         {
             empty_2x2_board = new Chessboard(2, 2);
+            chess_config = new DefaultChessConfiguration { Black = new Player { Id = "1" }, White = new Player { Id = "2" } };
+            loader = new DefaultChessLoader();
         }
 
         [Test]
@@ -42,14 +47,29 @@ namespace ChessTest
 
             Chessboard new_board = new Chessboard(empty_2x2_board);
 
-            Assert.IsTrue(new_board.Width == empty_2x2_board.Width &&
-                          new_board.Height == empty_2x2_board.Height &&
-                          new_board.BoardState == empty_2x2_board.BoardState);
+            Assert.IsTrue(new_board.Width == empty_2x2_board.Width);
+            Assert.IsTrue(new_board.Height == empty_2x2_board.Height);
+            Assert.IsTrue(new_board.BoardState == empty_2x2_board.BoardState);
+        }
+
+        [Test]
+        public void CreateFullBoard_DefaultChessBoard_Success()
+        {
+            var complete_board = loader.CreateBoard(chess_config);
+
+            Assert.IsTrue(complete_board.Width == 8 && complete_board.Height == 8);
         }
 
         [Test]
         public void GetTile_ValidPosition_ReturnsTile()
         {
+            var rook = new Rook(Position.Zero, default);
+            empty_2x2_board.BoardState[0, 0].Piece = rook;
+
+            var tile = empty_2x2_board.GetTile(new Position(0, 0));
+
+            Assert.IsNotNull(tile);
+            Assert.IsTrue(tile.Piece.Equals(rook));
         }
 
         [Test]

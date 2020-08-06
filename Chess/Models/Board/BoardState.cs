@@ -36,6 +36,22 @@ namespace Chess.Models.Board
         {
         }
 
+        public BoardState(BoardState other)
+        {
+            if (other == null || other.Tiles == null)
+                return;
+
+            Tiles = new Tile[other.Width, other.Height];
+
+            for (int i = 0; i < Width; i++)
+            {
+                for (int j = 0; j < Height; j++)
+                {
+                    this[i, j] = new Tile(other[i, j]);
+                }
+            }
+        }
+
         public BoardState(int Width, int Height)
         {
             Width = Math.Max(1, Width);
@@ -67,6 +83,7 @@ namespace Chess.Models.Board
                 return false;
 
             if (other.Tiles.GetLength(0) != this.Tiles.GetLength(0) || other.Tiles.GetLength(1) != this.Tiles.GetLength(1))
+                return false;
 
                 for (int i = 0; i < this.Tiles.GetLength(0); i++)
                 {
