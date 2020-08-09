@@ -1,7 +1,5 @@
 ﻿using Chess.Models.Classes;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Chess.Utility
 {

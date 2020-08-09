@@ -1,9 +1,7 @@
 ﻿using Chess.Models.Board;
 using Chess.Models.Classes;
 using Chess.Models.Game;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Chess.Models.Pieces
 {

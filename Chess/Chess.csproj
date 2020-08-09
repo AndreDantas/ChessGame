@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Assets\" />
     <Folder Include="Utility\Classes\" />
   </ItemGroup>
 

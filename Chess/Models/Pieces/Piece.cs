@@ -3,7 +3,6 @@ using Chess.Models.Classes;
 using Chess.Models.Game;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Chess.Models.Pieces
 {
@@ -12,7 +11,7 @@ namespace Chess.Models.Pieces
         /// <summary>
         /// Piece's name
         /// </summary>
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public abstract string Name { get; }
 
         private int moveCount;
@@ -40,11 +39,12 @@ namespace Chess.Models.Pieces
         }
 
         /// <summary>
-        /// Internal function to calculate all possible moves of this piece. Doesn't remove moves that leave the King in Check.
+        /// Internal function to calculate all possible moves of this piece. Doesn't remove moves
+        /// that leave the King in Check.
         /// </summary>
-        /// <param name="Board"></param>
-        /// <returns></returns>
-        /// <inheritdoc/>
+        /// <param name="Board"> </param>
+        /// <returns> </returns>
+        /// <inheritdoc />
         protected abstract List<Move> CalculateMoves(Chessboard Board);
 
         public abstract Piece Clone();
@@ -52,7 +52,7 @@ namespace Chess.Models.Pieces
         /// <summary>
         /// Returns all available moves from this piece
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         public virtual List<Move> GetMoves(Chessboard Board)
         {
             if (Board == null || Player == null)
@@ -90,7 +90,7 @@ namespace Chess.Models.Pieces
                    Player.Equals(piece.Player) &&
                    MoveCount == piece.MoveCount;
         }
-        
+
         public override int GetHashCode()
         {
             int hashCode = -1300823941;

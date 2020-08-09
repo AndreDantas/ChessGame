@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Chess.Controllers.Configuration;
+﻿using Chess.Controllers.Configuration;
 using Chess.Controllers.GameLoader;
 using Chess.Models.Board;
 using Chess.Models.Classes;
@@ -9,8 +6,6 @@ using Chess.Models.Exceptions;
 using Chess.Models.Game;
 using Chess.Models.Game.Action;
 using Chess.Models.Pieces;
-using Chess.Serialization;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
@@ -21,12 +16,16 @@ namespace ChessTest
         private Chessboard empty_2x2_board;
         private DefaultChessConfiguration chess_config;
         private DefaultChessLoader loader;
+        private Player black;
+        private Player white;
 
         [SetUp]
         public void Setup()
         {
+            black = new Player(id: "black");
+            white = new Player(id: "white");
             empty_2x2_board = new Chessboard(2, 2);
-            chess_config = new DefaultChessConfiguration { Black = new Player { Id = "1" }, White = new Player { Id = "2" } };
+            chess_config = new DefaultChessConfiguration { Black = black, White = white };
             loader = new DefaultChessLoader();
         }
 
@@ -144,6 +143,24 @@ namespace ChessTest
             empty_2x2_board.NavigateForward();
 
             Assert.IsTrue(empty_2x2_board.BoardState == board_after_move.BoardState);
+        }
+
+        [Test]
+        public void IsKingInCheck_ValidCheck_ReturnsTrue()
+        {
+            empty_2x2_board.BoardState[0, 0].Piece = new Pawn(new Position(0, 0), white, Position.Up);
+            empty_2x2_board.BoardState[1, 1].Piece = new King(new Position(0, 0), black);
+
+            Assert.IsTrue(empty_2x2_board.IsKingInCheck(white));
+        }
+
+        [Test]
+        public void IsKingInCheck_NotInCheck_ReturnsFalse()
+        {
+            empty_2x2_board.BoardState[0, 0].Piece = new Rook(new Position(0, 0), white);
+            empty_2x2_board.BoardState[1, 1].Piece = new King(new Position(0, 0), black);
+
+            Assert.IsFalse(empty_2x2_board.IsKingInCheck(white));
         }
     }
 }

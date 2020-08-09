@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Chess.Models.Game
 {
@@ -8,6 +7,12 @@ namespace Chess.Models.Game
     {
         public string Name;
         public string Id;
+
+        public Player(string name = "", string id = "")
+        {
+            Name = name;
+            Id = id;
+        }
 
         public override bool Equals(object obj)
         {

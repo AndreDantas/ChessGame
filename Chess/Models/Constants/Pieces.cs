@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Chess.Models.Constants
+﻿namespace Chess.Models.Constants
 {
     public static class Pieces
     {

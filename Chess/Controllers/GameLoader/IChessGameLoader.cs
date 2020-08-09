@@ -1,8 +1,5 @@
 ﻿using Chess.Controllers.Configuration;
 using Chess.Models.Board;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Chess.Controllers.GameLoader
 {

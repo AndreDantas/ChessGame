@@ -3,8 +3,6 @@ using Chess.Utility;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
 
 namespace Chess.Models.Board
 {
@@ -76,23 +74,20 @@ namespace Chess.Models.Board
 
         public bool Equals(BoardState other)
         {
-            if (other == null)
-                return false;
-
-            if (other.Tiles == null || this.Tiles == null)
+            if (other == null || other.Tiles == null || this.Tiles == null)
                 return false;
 
             if (other.Tiles.GetLength(0) != this.Tiles.GetLength(0) || other.Tiles.GetLength(1) != this.Tiles.GetLength(1))
                 return false;
 
-                for (int i = 0; i < this.Tiles.GetLength(0); i++)
+            for (int i = 0; i < this.Tiles.GetLength(0); i++)
+            {
+                for (int j = 0; j < this.Tiles.GetLength(1); j++)
                 {
-                    for (int j = 0; j < this.Tiles.GetLength(1); j++)
-                    {
-                        if (!this.Tiles[i, j].Equals(other.Tiles[i, j]))
-                            return false;
-                    }
+                    if (!this.Tiles[i, j].Equals(other.Tiles[i, j]))
+                        return false;
                 }
+            }
 
             return true;
         }

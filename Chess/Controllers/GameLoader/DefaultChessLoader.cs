@@ -5,8 +5,6 @@ using Chess.Models.Exceptions;
 using Chess.Models.Game;
 using Chess.Models.Pieces;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Chess.Controllers.GameLoader
 {
@@ -18,10 +16,11 @@ namespace Chess.Controllers.GameLoader
         /// Creates the default chess board
         /// </summary>
         /// <exception cref="InvalidPlayerException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
         public Chessboard CreateBoard(DefaultChessConfiguration config)
         {
             if (config == null)
-                return null;
+                throw new ArgumentNullException("config", "Configuration can't be null");
 
             try { ValidatePlayer(config.White); }
             catch (InvalidPlayerException e) { throw new InvalidPlayerException("Invalid white side Player: " + e.Message); }

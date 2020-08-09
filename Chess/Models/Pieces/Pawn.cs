@@ -2,9 +2,7 @@
 using Chess.Models.Classes;
 using Chess.Models.Game;
 using Chess.Utility;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Chess.Models.Pieces
 {

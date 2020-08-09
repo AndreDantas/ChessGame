@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Chess.Utility
 {
@@ -23,6 +22,31 @@ namespace Chess.Utility
                 return default;
 
             return s.Peek();
+        }
+
+        /// <summary>
+        /// If the string is Empty or Null, returns the replacement string
+        /// </summary>
+        /// <param name="s"> </param>
+        /// <param name="replacement"> </param>
+        /// <returns> </returns>
+        public static string IfEmpty(this string s, string replacement)
+        {
+            return string.IsNullOrEmpty(s) ? replacement : s;
+        }
+
+        public static T Search<T>(this List<T> l, Func<T, bool> searchFunction)
+        {
+            if (l == null || l.Count == 0)
+                return default(T);
+
+            for (int i = 0; i < l.Count; i++)
+            {
+                if (searchFunction(l[i]))
+                    return l[i];
+            }
+
+            return default(T);
         }
     }
 }

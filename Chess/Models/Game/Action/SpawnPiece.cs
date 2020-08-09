@@ -1,8 +1,8 @@
 ﻿using Chess.Models.Board;
 using Chess.Models.Classes;
-using Chess.Models.Pieces;
-using Chess.Models.Exceptions;
 using Chess.Models.Constants;
+using Chess.Models.Exceptions;
+using Chess.Models.Pieces;
 using System;
 
 namespace Chess.Models.Game.Action

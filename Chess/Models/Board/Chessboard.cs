@@ -1,13 +1,11 @@
 ﻿using Chess.Models.Classes;
+using Chess.Models.Exceptions;
+using Chess.Models.Game;
+using Chess.Models.Game.Action;
+using Chess.Models.Pieces;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Chess.Utility;
-using Chess.Models.Game;
-using Chess.Models.Exceptions;
-using Chess.Models.Pieces;
 using System.Linq;
-using Chess.Models.Game.Action;
 
 namespace Chess.Models.Board
 {
@@ -138,10 +136,7 @@ namespace Chess.Models.Board
 
             foreach (var piece in pieces)
             {
-                var moves = piece.GetMoves(this);
-
-                if (moves.Count != 0)
-                    movesDict[piece] = moves;
+                movesDict[piece] = piece.GetMoves(this);
             }
 
             return movesDict;
@@ -158,7 +153,7 @@ namespace Chess.Models.Board
                     foreach (var capture in move.Captures)
                     {
                         var tile = GetTile(capture);
-                        if (tile.Piece is King)
+                        if (tile?.Piece is King)
                             return true;
                     }
                 }
