@@ -10,7 +10,7 @@ namespace Chess.Serialization
     {
         public override bool CanConvert(Type objectType)
         {
-            return (objectType == typeof(Piece));
+            return (objectType == typeof(ChessPiece));
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -22,22 +22,22 @@ namespace Chess.Serialization
 
             switch (token["Name"].Value<string>())
             {
-                case Pieces.PAWN:
+                case ChessPieces.PAWN:
                     return token.ToObject<Pawn>(serializer);
 
-                case Pieces.KNIGHT:
+                case ChessPieces.KNIGHT:
                     return token.ToObject<Knight>(serializer);
 
-                case Pieces.ROOK:
+                case ChessPieces.ROOK:
                     return token.ToObject<Rook>(serializer);
 
-                case Pieces.BISHOP:
+                case ChessPieces.BISHOP:
                     return token.ToObject<Bishop>(serializer);
 
-                case Pieces.QUEEN:
+                case ChessPieces.QUEEN:
                     return token.ToObject<Queen>(serializer);
 
-                case Pieces.KING:
+                case ChessPieces.KING:
                     return token.ToObject<King>(serializer);
 
                 default:

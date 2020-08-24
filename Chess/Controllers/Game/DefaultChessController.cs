@@ -2,12 +2,10 @@
 using Chess.Controllers.GameLoader;
 using Chess.Models.Board;
 using Chess.Models.Classes;
-using Chess.Models.Exceptions;
 using Chess.Models.Game;
 using Chess.Models.Game.Action;
 using Chess.Models.Pieces;
 using Chess.Utility;
-using System;
 using System.Collections.Generic;
 
 namespace Chess.Controllers.Game
@@ -15,7 +13,7 @@ namespace Chess.Controllers.Game
     public struct PlayerInfo
     {
         public Player player;
-        public Dictionary<Piece, List<Move>> moves;
+        public Dictionary<ChessPiece, List<Move>> moves;
     }
 
     public enum GameState
@@ -49,12 +47,12 @@ namespace Chess.Controllers.Game
             return controller;
         }
 
-        public List<Move> GetPieceMoves(Piece piece)
+        public List<Move> GetPieceMoves(ChessPiece piece)
         {
             return CurrentPlayerInfo.moves[piece];
         }
 
-        public bool PlayerMove(Player player, Piece piece, Position endPosition)
+        public bool PlayerMove(Player player, ChessPiece piece, Position endPosition)
         {
             if (State != GameState.InProgress)
                 return false;
@@ -133,7 +131,7 @@ namespace Chess.Controllers.Game
             }
         }
 
-        protected virtual Dictionary<Piece, List<Move>> CalculatePlayerMoves(Player player)
+        protected virtual Dictionary<ChessPiece, List<Move>> CalculatePlayerMoves(Player player)
         {
             var movesDict = Board.GetAllMoves(player);
             var otherPlayer = player == White ? Black : White;

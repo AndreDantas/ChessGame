@@ -1,6 +1,6 @@
 ﻿namespace Chess.Models.Constants
 {
-    public static class Pieces
+    public static class ChessPieces
     {
         public const string PAWN = "Pawn";
         public const string KNIGHT = "Knight";

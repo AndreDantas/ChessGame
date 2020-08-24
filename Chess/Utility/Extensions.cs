@@ -38,7 +38,7 @@ namespace Chess.Utility
         public static T Search<T>(this List<T> l, Func<T, bool> searchFunction)
         {
             if (l == null || l.Count == 0)
-                return default(T);
+                return default;
 
             for (int i = 0; i < l.Count; i++)
             {
@@ -46,7 +46,22 @@ namespace Chess.Utility
                     return l[i];
             }
 
-            return default(T);
+            return default;
+        }
+
+        public static List<T2> Map<T1, T2>(this List<T1> l, Func<T1, T2> mapFunction)
+        {
+            if (mapFunction == null || l == null)
+                return null;
+
+            var newList = new List<T2>();
+
+            foreach (var item in l)
+            {
+                newList.Add(mapFunction(item));
+            }
+
+            return newList;
         }
     }
 }

@@ -2,18 +2,19 @@
 using Chess.Models.Classes;
 using Chess.Models.Game;
 using System.Collections.Generic;
+using static Chess.Models.Board.Chessboard;
 
 namespace Chess.Models.Pieces
 {
-    public class King : Piece
+    public class King : ChessPiece
     {
-        public override string Name => Constants.Pieces.KING;
+        public override string Name => Constants.ChessPieces.KING;
 
         public King(Position position = default, Player player = default, int moveCount = 0) : base(position, player, moveCount)
         {
         }
 
-        public override Piece Clone()
+        public override ChessPiece Clone()
         {
             return new King(CurrentPosition, Player, MoveCount);
         }
@@ -28,14 +29,14 @@ namespace Chess.Models.Pieces
             foreach (var Direction in Directions)
             {
                 Position pos = CurrentPosition + Direction;
-                Tile tile = Board.GetTile(pos);
+                TileInfo tile = Board.GetTileInfo(pos);
 
-                if (tile == null)
+                if (!tile.IsValid)
                     continue;
 
-                if (tile.Piece != null)
+                if (tile.hasPiece)
                 {
-                    if (tile.Piece.Player != this.Player)
+                    if (Board.GetPiece(pos).Player != this.Player)
                         moves.Add(CreateMove(pos, pos));
 
                     continue;

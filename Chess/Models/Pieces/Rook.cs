@@ -2,22 +2,23 @@
 using Chess.Models.Classes;
 using Chess.Models.Game;
 using System.Collections.Generic;
+using static Chess.Models.Board.Chessboard;
 
 namespace Chess.Models.Pieces
 {
     /// <summary>
-    /// A rook can move any number of squares along a rank or file, but cannot leap over other pieces.
-    /// Along with the king, a rook is involved during the king's castling move.
+    /// A rook can move any number of squares along a rank or file, but cannot leap over other
+    /// pieces. Along with the king, a rook is involved during the king's castling move.
     /// </summary>
-    public class Rook : Piece
+    public class Rook : ChessPiece
     {
-        public override string Name => Constants.Pieces.ROOK;
+        public override string Name => Constants.ChessPieces.ROOK;
 
         public Rook(Position position = default, Player player = default, int moveCount = 0) : base(position, player, moveCount)
         {
         }
 
-        public override Piece Clone()
+        public override ChessPiece Clone()
         {
             return new Rook(CurrentPosition, Player, MoveCount);
         }
@@ -31,13 +32,13 @@ namespace Chess.Models.Pieces
             foreach (var Direction in Directions)
             {
                 Position pos = CurrentPosition + Direction.Sign;
-                Tile tile = Board.GetTile(pos);
+                TileInfo tile = Board.GetTileInfo(pos);
 
-                while (tile != null)
+                while (tile.IsValid)
                 {
-                    if (tile.Piece != null)
+                    if (tile.hasPiece)
                     {
-                        if (tile.Piece.Player != this.Player)
+                        if (Board.GetPiece(pos).Player != this.Player)
                             moves.Add(CreateMove(pos, pos));
 
                         break;
@@ -47,7 +48,7 @@ namespace Chess.Models.Pieces
                         moves.Add(CreateMove(pos));
 
                         pos += Direction.Sign;
-                        tile = Board.GetTile(pos);
+                        tile = Board.GetTileInfo(pos);
                     }
                 }
             }

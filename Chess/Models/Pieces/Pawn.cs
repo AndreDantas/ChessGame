@@ -3,19 +3,21 @@ using Chess.Models.Classes;
 using Chess.Models.Game;
 using Chess.Utility;
 using System.Collections.Generic;
+using static Chess.Models.Board.Chessboard;
 
 namespace Chess.Models.Pieces
 {
     /// <summary>
-    /// A pawn can move forward to the unoccupied square immediately in front of it on the same file,
-    /// or on its first move it can advance two squares along the same file, provided both squares are unoccupied;
-    /// or the pawn can capture an opponent's piece on a square diagonally in front of it on an adjacent file,
-    /// by moving to that square. A pawn has two special moves: the en passant capture and promotion.
+    /// A pawn can move forward to the unoccupied square immediately in front of it on the same
+    /// file, or on its first move it can advance two squares along the same file, provided both
+    /// squares are unoccupied; or the pawn can capture an opponent's piece on a square diagonally
+    /// in front of it on an adjacent file, by moving to that square. A pawn has two special moves:
+    /// the en passant capture and promotion.
     /// </summary>
-    public class Pawn : Piece
+    public class Pawn : ChessPiece
     {
         public Position MoveDirection = Position.Up;
-        public override string Name => Constants.Pieces.PAWN;
+        public override string Name => Constants.ChessPieces.PAWN;
 
         protected Pawn(Position position = default, Player player = default, int moveCount = 0) : base(position, player, moveCount)
         {
@@ -26,7 +28,7 @@ namespace Chess.Models.Pieces
             MoveDirection = moveDirection != Position.Zero ? moveDirection : Position.Up;
         }
 
-        public override Piece Clone()
+        public override ChessPiece Clone()
         {
             return new Pawn(CurrentPosition, Player, MoveDirection, MoveCount);
         }
@@ -38,21 +40,21 @@ namespace Chess.Models.Pieces
             #region Forward 1
 
             Position pos = CurrentPosition + MoveDirection.Sign;
-            Tile tile = Board.GetTile(pos);
+            TileInfo tile = Board.GetTileInfo(pos);
 
-            if (tile != null && tile.Piece == null)
+            if (tile.IsValid && !tile.hasPiece)
                 moves.Add(CreateMove(pos));
 
             #endregion Forward 1
 
             #region Forward 2
 
-            if (MoveCount == 0 && tile != null && tile.Piece == null)
+            if (MoveCount == 0 && tile.IsValid && !tile.hasPiece)
             {
                 pos = CurrentPosition + MoveDirection.Sign * 2;
-                tile = Board.GetTile(pos);
+                tile = Board.GetTileInfo(pos);
 
-                if (tile != null && tile.Piece == null)
+                if (tile.IsValid && !tile.hasPiece)
                     moves.Add(CreateMove(pos));
             }
 
@@ -61,9 +63,9 @@ namespace Chess.Models.Pieces
             #region Attack Left
 
             pos = Functions.Rotate(CurrentPosition + MoveDirection.Sign * 2, CurrentPosition + MoveDirection.Sign, 90);
-            tile = Board.GetTile(pos);
+            var attackedPiece = Board.GetPiece(pos);
 
-            if (tile != null && tile.Piece != null && tile.Piece.Player != this.Player)
+            if (attackedPiece != null && attackedPiece.Player != this.Player)
                 moves.Add(CreateMove(pos, pos));
 
             #endregion Attack Left
@@ -71,9 +73,9 @@ namespace Chess.Models.Pieces
             #region Attack Right
 
             pos = Functions.Rotate(CurrentPosition + MoveDirection.Sign * 2, CurrentPosition + MoveDirection.Sign, -90);
-            tile = Board.GetTile(pos);
+            attackedPiece = Board.GetPiece(pos);
 
-            if (tile != null && tile.Piece != null && tile.Piece.Player != this.Player)
+            if (attackedPiece != null && attackedPiece.Player != this.Player)
                 moves.Add(CreateMove(pos, pos));
 
             #endregion Attack Right

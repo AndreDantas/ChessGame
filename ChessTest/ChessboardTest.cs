@@ -33,22 +33,18 @@ namespace ChessTest
         public void Constructor_Create8x8Board_Success()
         {
             Chessboard board_8x8 = new Chessboard(8, 8);
-            int board_width = board_8x8.BoardState.Width;
-            int board_height = board_8x8.BoardState.Height;
 
-            Assert.IsTrue(board_width == 8 && board_height == 8);
+            Assert.IsTrue(board_8x8.Width == 8 && board_8x8.Height == 8);
         }
 
         [Test]
         public void Constructor_CreateBoardWithOtherBoard_Success()
         {
-            empty_2x2_board.BoardState[1, 0].Piece = new Pawn(new Position(1, 0), default, Position.Up);
+            empty_2x2_board.AddPiece(new Pawn(new Position(1, 0), white, Position.Up));
 
             Chessboard new_board = new Chessboard(empty_2x2_board);
 
-            Assert.IsTrue(new_board.Width == empty_2x2_board.Width);
-            Assert.IsTrue(new_board.Height == empty_2x2_board.Height);
-            Assert.IsTrue(new_board.BoardState == empty_2x2_board.BoardState);
+            Assert.IsTrue(new_board.CompareBoardStates(empty_2x2_board));
         }
 
         [Test]
@@ -62,40 +58,39 @@ namespace ChessTest
         [Test]
         public void GetTile_ValidPosition_ReturnsTile()
         {
-            var rook = new Rook(Position.Zero, default);
-            empty_2x2_board.BoardState[0, 0].Piece = rook;
+            var rook = new Rook(Position.Zero, white);
+            empty_2x2_board.AddPiece(rook);
 
-            var tile = empty_2x2_board.GetTile(new Position(0, 0));
+            var piece = empty_2x2_board.GetPiece(new Position(0, 0));
 
-            Assert.IsNotNull(tile);
-            Assert.IsTrue(tile.Piece.Equals(rook));
+            Assert.IsTrue(piece.Equals(rook));
         }
 
         [Test]
         public void ExecuteAction_ValidMove_Success()
         {
-            var pawn = empty_2x2_board.BoardState[1, 0].Piece = new Pawn(new Position(1, 0), default, Position.Up);
+            var pawn = empty_2x2_board.AddPiece(new Pawn(new Position(1, 0), white, Position.Up));
 
             empty_2x2_board.ExecuteAction(pawn.GetMoves(empty_2x2_board)[0]);
 
-            Assert.IsTrue(empty_2x2_board.BoardState[1, 1].Piece.Equals(pawn));
+            Assert.IsTrue(empty_2x2_board.GetPiece(new Position(1, 1)).Equals(pawn));
         }
 
         [Test]
         public void ExecuteAction_ValidSpawnPiece_Success()
         {
-            var rook = new Rook(Position.Zero, default);
+            var rook = new Rook(Position.Zero, white);
             var spawn_piece = new SpawnPiece(rook, Position.Zero);
 
             empty_2x2_board.ExecuteAction(spawn_piece);
 
-            Assert.IsTrue(empty_2x2_board.BoardState[0, 0].Piece.Equals(rook));
+            Assert.IsTrue(empty_2x2_board.GetPiece(Position.Zero).Equals(rook));
         }
 
         [Test]
         public void ExecuteAction_InvalidMove_ThrowsInvalidActionException()
         {
-            var pawn = empty_2x2_board.BoardState[1, 0].Piece = new Pawn(new Position(1, 0), default, Position.Up);
+            var pawn = empty_2x2_board.AddPiece(new Pawn(new Position(1, 0), white, Position.Up));
             Move invalid_move = new Move
             {
                 StartPosition = new Position(0, 0),
@@ -108,7 +103,7 @@ namespace ChessTest
         [Test]
         public void ExecuteAction_InvalidSpawnPiece_ThrowsInvalidActionException()
         {
-            var rook = new Rook(Position.Zero, default);
+            var rook = new Rook(Position.Zero, white);
             var spawn_piece = new SpawnPiece(rook, Position.Zero);
 
             SpawnPiece invalid_spawn = new SpawnPiece(new King(), new Position(2, 2));
@@ -119,7 +114,7 @@ namespace ChessTest
         [Test]
         public void NavigateBack_ValidMove_CorrectBoardState()
         {
-            var pawn = empty_2x2_board.BoardState[1, 0].Piece = new Pawn(new Position(1, 0), default, Position.Up);
+            var pawn = empty_2x2_board.AddPiece(new Pawn(new Position(1, 0), white, Position.Up));
 
             Chessboard board_before_move = new Chessboard(empty_2x2_board);
 
@@ -127,13 +122,13 @@ namespace ChessTest
 
             empty_2x2_board.NavigateBack();
 
-            Assert.IsTrue(empty_2x2_board.BoardState == board_before_move.BoardState);
+            Assert.IsTrue(empty_2x2_board.CompareBoardStates(board_before_move));
         }
 
         [Test]
         public void NavigateForward_ValidMove_CorrectBoardState()
         {
-            var pawn = empty_2x2_board.BoardState[1, 0].Piece = new Pawn(new Position(1, 0), default, Position.Up);
+            var pawn = empty_2x2_board.AddPiece(new Pawn(new Position(1, 0), white, Position.Up));
 
             empty_2x2_board.ExecuteAction(pawn.GetMoves(empty_2x2_board)[0]);
 
@@ -142,14 +137,14 @@ namespace ChessTest
             empty_2x2_board.NavigateBack();
             empty_2x2_board.NavigateForward();
 
-            Assert.IsTrue(empty_2x2_board.BoardState == board_after_move.BoardState);
+            Assert.IsTrue(empty_2x2_board.CompareBoardStates(board_after_move));
         }
 
         [Test]
         public void IsKingInCheck_ValidCheck_ReturnsTrue()
         {
-            empty_2x2_board.BoardState[0, 0].Piece = new Pawn(new Position(0, 0), white, Position.Up);
-            empty_2x2_board.BoardState[1, 1].Piece = new King(new Position(0, 0), black);
+            empty_2x2_board.AddPiece(new Pawn(new Position(0, 0), white, Position.Up));
+            empty_2x2_board.AddPiece(new King(new Position(1, 1), black));
 
             Assert.IsTrue(empty_2x2_board.IsKingInCheck(white));
         }
@@ -157,8 +152,8 @@ namespace ChessTest
         [Test]
         public void IsKingInCheck_NotInCheck_ReturnsFalse()
         {
-            empty_2x2_board.BoardState[0, 0].Piece = new Rook(new Position(0, 0), white);
-            empty_2x2_board.BoardState[1, 1].Piece = new King(new Position(0, 0), black);
+            empty_2x2_board.AddPiece(new Rook(new Position(0, 0), white));
+            empty_2x2_board.AddPiece(new King(new Position(1, 1), black));
 
             Assert.IsFalse(empty_2x2_board.IsKingInCheck(white));
         }

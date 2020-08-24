@@ -6,13 +6,13 @@ namespace Chess.Models.Classes
 {
     public class Tile : IEquatable<Tile>
     {
-        public Piece Piece;
+        public ChessPiece Piece;
 
         public Tile()
         {
         }
 
-        public Tile(Piece piece)
+        public Tile(ChessPiece piece)
         {
             this.Piece = piece;
         }
@@ -30,12 +30,12 @@ namespace Chess.Models.Classes
         public bool Equals(Tile other)
         {
             return other != null &&
-                   (EqualityComparer<Piece>.Default.Equals(Piece, other.Piece) || (this.Piece == null && other.Piece == null));
+                   (EqualityComparer<ChessPiece>.Default.Equals(Piece, other.Piece) || (this.Piece == null && other.Piece == null));
         }
 
         public override int GetHashCode()
         {
-            return 816749037 + EqualityComparer<Piece>.Default.GetHashCode(Piece);
+            return 816749037 + EqualityComparer<ChessPiece>.Default.GetHashCode(Piece);
         }
 
         public static bool operator ==(Tile left, Tile right)

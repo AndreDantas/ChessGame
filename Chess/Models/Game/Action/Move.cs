@@ -3,8 +3,10 @@ using Chess.Models.Classes;
 using Chess.Models.Constants;
 using Chess.Models.Exceptions;
 using Chess.Models.Game.Action;
+using Chess.Models.Pieces;
 using System;
 using System.Collections.Generic;
+using static Chess.Models.Board.Chessboard;
 
 namespace Chess.Models.Game
 {
@@ -45,37 +47,36 @@ namespace Chess.Models.Game
             if (board == null)
                 throw new ArgumentNullException("Board can't be null");
 
-            Tile startTile = board.GetTile(StartPosition);
-            Tile endTile = board.GetTile(EndPosition);
+            ChessPiece movePiece = board.GetPiece(StartPosition);
+            var startTileInfo = board.GetTileInfo(StartPosition);
+            var endTileInfo = board.GetTileInfo(EndPosition);
 
-            if (startTile.Piece == null)
+            if (movePiece == null)
                 throw new NullPieceException("Can't start move on empty square");
 
-            if (startTile == null)
+            if (!startTileInfo.IsValid)
                 throw new InvalidPositionException(String.Format("Start position {0} is invalid in this board", StartPosition.ToString()));
 
-            if (endTile == null)
+            if (!endTileInfo.IsValid)
                 throw new InvalidPositionException(String.Format("End position {0} is invalid in this board", EndPosition.ToString()));
 
             if (Captures != null)
                 foreach (var capture in Captures)
                 {
-                    Tile tile = board.GetTile(capture);
+                    TileInfo tile = board.GetTileInfo(capture);
 
-                    if (tile == null)
-                        throw new InvalidPositionException(String.Format("Capture's position {0} is invalid in this board", EndPosition.ToString()));
+                    if (!tile.IsValid)
+                        throw new InvalidPositionException(String.Format("Capture's position {0} is invalid in this board", capture.ToString()));
 
-                    if (tile.Piece == null)
-                        throw new NullPieceException(String.Format("Capture's position {0} doesn't have a piece", EndPosition.ToString()));
+                    if (!tile.hasPiece)
+                        throw new NullPieceException(String.Format("Capture's position {0} doesn't have a piece", capture.ToString()));
 
-                    board.RemovedPieces.Push(tile.Piece);
-                    tile.Piece = null;
+                    board.RemovedPieces.Push(board.RemovePiece(capture));
                 }
 
-            var piece = endTile.Piece = startTile.Piece;
-            piece.CurrentPosition = EndPosition;
-            piece.MoveCount++;
-            startTile.Piece = null;
+            board.MovePiece(StartPosition, EndPosition);
+
+            movePiece.MoveCount++;
 
             if (ExtraMoves != null)
                 foreach (var extraMove in ExtraMoves)
@@ -89,35 +90,35 @@ namespace Chess.Models.Game
             if (board == null)
                 throw new ArgumentNullException("Board can't be null");
 
-            Tile startTile = board.GetTile(StartPosition);
-            Tile endTile = board.GetTile(EndPosition);
+            ChessPiece movePiece = board.GetPiece(EndPosition);
+            var startTileInfo = board.GetTileInfo(StartPosition);
+            var endTileInfo = board.GetTileInfo(EndPosition);
 
-            if (endTile.Piece == null)
+            if (movePiece == null)
                 throw new NullPieceException("Can't revert move on empty square");
 
-            if (startTile == null)
+            if (!startTileInfo.IsValid)
                 throw new InvalidPositionException(String.Format("Start position {0} is invalid in this board", StartPosition.ToString()));
 
-            if (endTile == null)
+            if (!endTileInfo.IsValid)
                 throw new InvalidPositionException(String.Format("End position {0} is invalid in this board", EndPosition.ToString()));
 
-            var piece = startTile.Piece = endTile.Piece;
-            piece.CurrentPosition = StartPosition;
-            piece.MoveCount--;
-            endTile.Piece = null;
+            board.MovePiece(EndPosition, StartPosition);
+
+            movePiece.MoveCount--;
 
             if (Captures != null)
                 foreach (var capture in Captures)
                 {
-                    Tile tile = board.GetTile(capture);
+                    TileInfo tile = board.GetTileInfo(capture);
 
-                    if (tile == null)
-                        throw new InvalidPositionException(String.Format("Capture's position {0} is invalid in this board", EndPosition.ToString()));
+                    if (!tile.IsValid)
+                        throw new InvalidPositionException(String.Format("Capture's position {0} is invalid in this board", capture.ToString()));
 
                     if (board.RemovedPieces.Count == 0)
-                        throw new IndexOutOfRangeException(String.Format("Capture's position {0} doesn't have a piece", EndPosition.ToString()));
+                        throw new IndexOutOfRangeException(String.Format("Capture's position {0} doesn't have a piece", capture.ToString()));
 
-                    tile.Piece = board.RemovedPieces.Pop();
+                    board.AddPiece(board.RemovedPieces.Pop());
                 }
 
             if (ExtraMoves != null)

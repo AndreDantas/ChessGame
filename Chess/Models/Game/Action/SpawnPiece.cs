@@ -1,7 +1,6 @@
 ﻿using Chess.Models.Board;
 using Chess.Models.Classes;
 using Chess.Models.Constants;
-using Chess.Models.Exceptions;
 using Chess.Models.Pieces;
 using System;
 
@@ -20,14 +19,14 @@ namespace Chess.Models.Game.Action
         /// <summary>
         /// The piece to spawn
         /// </summary>
-        public Piece Piece;
+        public ChessPiece Piece;
 
         /// <summary>
         /// The position on the board
         /// </summary>
         public Position Position;
 
-        public SpawnPiece(Piece piece, Position position)
+        public SpawnPiece(ChessPiece piece, Position position)
         {
             this.Piece = piece.Clone();
             this.Position = position;
@@ -38,16 +37,9 @@ namespace Chess.Models.Game.Action
             if (board == null || Piece == null)
                 throw new ArgumentNullException("Board or piece can't be null");
 
-            Tile spawnTile = board.GetTile(Position);
-
-            if (spawnTile == null)
-                throw new InvalidPositionException("Spawn's position {0} is invalid in this board");
-
-            if (spawnTile.Piece != null)
-                throw new InvalidPositionException("Can't spawn piece on occupied tile");
-
-            spawnTile.Piece = Piece;
             Piece.CurrentPosition = Position;
+
+            board.AddPiece(Piece);
         }
 
         public void Revert(Chessboard board)
@@ -55,12 +47,7 @@ namespace Chess.Models.Game.Action
             if (board == null || Piece == null)
                 throw new ArgumentNullException("Board or piece can't be null");
 
-            Tile spawnTile = board.GetTile(Position);
-
-            if (spawnTile == null)
-                throw new InvalidPositionException("Spawn's position {0} is invalid in this board");
-
-            spawnTile.Piece = null;
+            board.RemovePiece(Position);
         }
     }
 }

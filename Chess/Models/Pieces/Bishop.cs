@@ -2,21 +2,22 @@
 using Chess.Models.Classes;
 using Chess.Models.Game;
 using System.Collections.Generic;
+using static Chess.Models.Board.Chessboard;
 
 namespace Chess.Models.Pieces
 {
     /// <summary>
     /// A bishop can move any number of squares diagonally, but cannot leap over other pieces.
     /// </summary>
-    public class Bishop : Piece
+    public class Bishop : ChessPiece
     {
-        public override string Name => Constants.Pieces.BISHOP;
+        public override string Name => Constants.ChessPieces.BISHOP;
 
         public Bishop(Position position = default, Player player = default, int moveCount = 0) : base(position, player, moveCount)
         {
         }
 
-        public override Piece Clone()
+        public override ChessPiece Clone()
         {
             return new Bishop(CurrentPosition, Player, MoveCount);
         }
@@ -30,13 +31,13 @@ namespace Chess.Models.Pieces
             foreach (var Direction in Directions)
             {
                 Position pos = CurrentPosition + Direction.Sign;
-                Tile tile = Board.GetTile(pos);
+                TileInfo tile = Board.GetTileInfo(pos);
 
-                while (tile != null)
+                while (tile.IsValid)
                 {
-                    if (tile.Piece != null)
+                    if (tile.hasPiece)
                     {
-                        if (tile.Piece.Player != this.Player)
+                        if (Board.GetPiece(pos).Player != this.Player)
                             moves.Add(CreateMove(pos, pos));
 
                         break;
@@ -46,7 +47,7 @@ namespace Chess.Models.Pieces
                         moves.Add(CreateMove(pos));
 
                         pos += Direction.Sign;
-                        tile = Board.GetTile(pos);
+                        tile = Board.GetTileInfo(pos);
                     }
                 }
             }
