@@ -1,6 +1,7 @@
 ﻿using Chess.Models.Board;
 using Chess.Models.Classes;
 using Chess.Models.Game;
+using Chess.Models.Game.Action;
 using System.Collections.Generic;
 using static Chess.Models.Board.Chessboard;
 
@@ -37,8 +38,9 @@ namespace Chess.Models.Pieces
                 {
                     if (tile.hasPiece)
                     {
-                        if (Board.GetPiece(pos).Player != this.Player)
-                            moves.Add(CreateMove(pos, pos));
+                        var attackedPiece = Board.GetPiece(pos);
+                        if (attackedPiece.Player != this.Player)
+                            moves.Add(CreateMove(pos, new Capture(attackedPiece)));
 
                         break;
                     }

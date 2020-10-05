@@ -7,19 +7,20 @@ namespace Chess.Models.Classes
     public class Tile : IEquatable<Tile>
     {
         public ChessPiece Piece;
+        public Position Position;
 
-        public Tile()
+        public Tile(Position position)
         {
+            this.Position = position;
         }
 
-        public Tile(ChessPiece piece)
+        public Tile(Position position, ChessPiece piece) : this(position)
         {
             this.Piece = piece;
         }
 
-        public Tile(Tile other)
+        public Tile(Tile other) : this(other?.Position ?? default, other.Piece?.Clone())
         {
-            this.Piece = other.Piece?.Clone();
         }
 
         public override bool Equals(object obj)
@@ -30,7 +31,7 @@ namespace Chess.Models.Classes
         public bool Equals(Tile other)
         {
             return other != null &&
-                   (EqualityComparer<ChessPiece>.Default.Equals(Piece, other.Piece) || (this.Piece == null && other.Piece == null));
+                   (EqualityComparer<ChessPiece>.Default.Equals(Piece, other.Piece) || (this.Piece == null && other.Piece == null)) && Position == other.Position;
         }
 
         public override int GetHashCode()

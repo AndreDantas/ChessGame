@@ -1,6 +1,7 @@
 ﻿using Chess.Models.Board;
 using Chess.Models.Classes;
 using Chess.Models.Game;
+using Chess.Models.Game.Action;
 using System;
 using System.Collections.Generic;
 
@@ -60,13 +61,13 @@ namespace Chess.Models.Pieces
         /// Helper function to create a Move
         /// </summary>
         /// <returns> </returns>
-        public virtual Move CreateMove(Position endPosition, List<Position> captures = null, List<Move> extraMoves = null)
+        public virtual Move CreateMove(Position endPosition, List<Capture> captures = null, List<Move> extraMoves = null)
         {
             return new Move
             {
                 StartPosition = this.CurrentPosition,
                 EndPosition = endPosition,
-                Captures = captures ?? new List<Position>(),
+                Captures = captures ?? new List<Capture>(),
                 ExtraMoves = extraMoves ?? new List<Move>()
             };
         }
@@ -75,18 +76,18 @@ namespace Chess.Models.Pieces
         /// Helper function to create a Move
         /// </summary>
         /// <returns> </returns>
-        public virtual Move CreateMove(Position endPosition, Position capture, List<Move> extraMoves = null)
+        public virtual Move CreateMove(Position endPosition, Capture capture, List<Move> extraMoves = null)
         {
-            return CreateMove(endPosition, new List<Position> { capture });
+            return CreateMove(endPosition, new List<Capture> { capture });
         }
 
         /// <summary>
         /// Helper function to create a Move
         /// </summary>
         /// <returns> </returns>
-        public virtual Move CreateMove(Position endPosition, Position capture, Move extraMove)
+        public virtual Move CreateMove(Position endPosition, Capture capture, Move extraMove)
         {
-            return CreateMove(endPosition, new List<Position> { capture }, new List<Move> { extraMove });
+            return CreateMove(endPosition, new List<Capture> { capture }, new List<Move> { extraMove });
         }
 
         public override bool Equals(object obj)

@@ -29,6 +29,7 @@ namespace Chess.Controllers.Game
         public Player Black;
         public PlayerInfo CurrentPlayerInfo { get; protected set; }
         public GameState State { get; protected set; } = GameState.InProgress;
+        public Chessboard CurrentBoardCopy => new Chessboard(this.Board);
 
         private DefaultChessController()
         {
@@ -54,18 +55,16 @@ namespace Chess.Controllers.Game
 
         public bool PlayerMove(Player player, ChessPiece piece, Position endPosition)
         {
-            if (State != GameState.InProgress)
-                return false;
-
-            if (player != CurrentPlayerInfo.player)
+            if (State != GameState.InProgress || player != CurrentPlayerInfo.player)
                 return false;
 
             var moves = CurrentPlayerInfo.moves[piece];
 
-            if (moves == null || moves.Count == 0)
+            if (moves?.Count == 0)
                 return false;
 
             var move = moves.Search(m => m.EndPosition == endPosition);
+
             if (EqualityComparer<Move>.Default.Equals(move, default))
                 return false;
 

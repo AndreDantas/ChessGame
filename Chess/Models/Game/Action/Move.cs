@@ -28,9 +28,9 @@ namespace Chess.Models.Game
         public Position EndPosition;
 
         /// <summary>
-        /// The positions where a piece was captured
+        /// The list of captures
         /// </summary>
-        public List<Position> Captures;
+        public List<Capture> Captures;
 
         public List<Move> ExtraMoves;
 
@@ -63,15 +63,15 @@ namespace Chess.Models.Game
             if (Captures != null)
                 foreach (var capture in Captures)
                 {
-                    TileInfo tile = board.GetTileInfo(capture);
+                    TileInfo tile = board.GetTileInfo(capture.Position);
 
                     if (!tile.IsValid)
-                        throw new InvalidPositionException(String.Format("Capture's position {0} is invalid in this board", capture.ToString()));
+                        throw new InvalidPositionException(String.Format("Capture's position {0} is invalid in this board", capture.Position.ToString()));
 
                     if (!tile.hasPiece)
-                        throw new NullPieceException(String.Format("Capture's position {0} doesn't have a piece", capture.ToString()));
+                        throw new NullPieceException(String.Format("Capture's position {0} doesn't have a piece", capture.Position.ToString()));
 
-                    board.RemovedPieces.Push(board.RemovePiece(capture));
+                    board.RemovePiece(capture.Position);
                 }
 
             board.MovePiece(StartPosition, EndPosition);
@@ -110,15 +110,15 @@ namespace Chess.Models.Game
             if (Captures != null)
                 foreach (var capture in Captures)
                 {
-                    TileInfo tile = board.GetTileInfo(capture);
+                    TileInfo tile = board.GetTileInfo(capture.Position);
 
                     if (!tile.IsValid)
-                        throw new InvalidPositionException(String.Format("Capture's position {0} is invalid in this board", capture.ToString()));
+                        throw new InvalidPositionException(String.Format("Capture's position {0} is invalid in this board", capture.Position.ToString()));
 
-                    if (board.RemovedPieces.Count == 0)
-                        throw new IndexOutOfRangeException(String.Format("Capture's position {0} doesn't have a piece", capture.ToString()));
+                    if (capture.Piece == null)
+                        throw new IndexOutOfRangeException(String.Format("Capture's position {0} doesn't have a piece", capture.Position.ToString()));
 
-                    board.AddPiece(board.RemovedPieces.Pop());
+                    board.AddPiece(capture.Piece);
                 }
 
             if (ExtraMoves != null)

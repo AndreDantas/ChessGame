@@ -73,6 +73,9 @@ namespace Chess.Models.Classes
         /// </summary>
         public static Position Zero => new Position(0, 0);
 
+        /// <summary>
+        /// A list of all cardinal directions
+        /// </summary>
         public static List<Position> Cardinal = new List<Position>
                 {
                     Up,
@@ -81,6 +84,9 @@ namespace Chess.Models.Classes
                     Right
                 };
 
+        /// <summary>
+        /// A list of all diagonal directions
+        /// </summary>
         public static List<Position> Diagonal = new List<Position>
                 {
                     TopRight,
@@ -107,6 +113,24 @@ namespace Chess.Models.Classes
             };
         }
 
+        public static Position operator *(Position a, Position b)
+        {
+            return new Position
+            {
+                x = a.x * b.x,
+                y = a.y * b.y
+            };
+        }
+
+        public static Position operator /(Position a, Position b)
+        {
+            return new Position
+            {
+                x = a.x / b.x,
+                y = a.y / b.y
+            };
+        }
+
         public static Position operator *(Position a, int b)
         {
             return new Position
@@ -121,6 +145,20 @@ namespace Chess.Models.Classes
             return b * a;
         }
 
+        public static Position operator /(Position a, int b)
+        {
+            return new Position
+            {
+                x = a.x / b,
+                y = a.y / b
+            };
+        }
+
+        public static Position operator /(int a, Position b)
+        {
+            return b / a;
+        }
+
         public static bool operator ==(Position left, Position right)
         {
             return left.Equals(right);
@@ -133,7 +171,7 @@ namespace Chess.Models.Classes
 
         public override string ToString()
         {
-            return String.Format("({0}, {1})", x.ToString(), y.ToString());
+            return $"({x}, {y})";
         }
 
         public override int GetHashCode()

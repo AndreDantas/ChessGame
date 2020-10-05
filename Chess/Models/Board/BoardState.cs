@@ -60,7 +60,7 @@ namespace Chess.Models.Board
             {
                 for (int j = 0; j < Height; j++)
                 {
-                    Tiles[i, j] = new Tile();
+                    Tiles[i, j] = new Tile(new Position(i, j));
                 }
             }
         }
@@ -77,12 +77,12 @@ namespace Chess.Models.Board
             if (other == null || other.Tiles == null || this.Tiles == null)
                 return false;
 
-            if (other.Tiles.GetLength(0) != this.Tiles.GetLength(0) || other.Tiles.GetLength(1) != this.Tiles.GetLength(1))
+            if (other.Width != this.Width || other.Height != this.Height)
                 return false;
 
-            for (int i = 0; i < this.Tiles.GetLength(0); i++)
+            for (int i = 0; i < this.Width; i++)
             {
-                for (int j = 0; j < this.Tiles.GetLength(1); j++)
+                for (int j = 0; j < this.Height; j++)
                 {
                     if (!this.Tiles[i, j].Equals(other.Tiles[i, j]))
                         return false;

@@ -20,7 +20,7 @@ namespace Chess.Models.Board
             /// <summary>
             /// The position of the tile
             /// </summary>
-            public Position pos;
+            public Position position;
 
             /// <summary>
             /// If the tile has a piece
@@ -31,9 +31,17 @@ namespace Chess.Models.Board
 
             public TileInfo(Position pos, bool hasPiece)
             {
-                this.pos = pos;
+                this.position = pos;
                 this.hasPiece = hasPiece;
                 this.IsValid = true;
+            }
+
+            public static implicit operator TileInfo(Tile t)
+            {
+                if (t == null)
+                    return default;
+
+                return new TileInfo { position = t.Position, IsValid = true, hasPiece = t.Piece != null };
             }
         }
 
@@ -45,9 +53,6 @@ namespace Chess.Models.Board
 
         [JsonProperty]
         public Stack<IChessAction> ActionCache { get; protected set; } = new Stack<IChessAction>();
-
-        [JsonProperty]
-        public Stack<ChessPiece> RemovedPieces { get; protected set; } = new Stack<ChessPiece>();
 
         private Dictionary<Player, List<ChessPiece>> pieceLists;
 
@@ -98,9 +103,6 @@ namespace Chess.Models.Board
             Width = other.Width;
             Height = other.Height;
             ActionHistory = other.ActionHistory;
-
-            foreach (var piece in other.RemovedPieces.Reverse())
-                RemovedPieces.Push(piece.Clone());
 
             BoardState = new BoardState(other.BoardState);
         }
@@ -224,12 +226,7 @@ namespace Chess.Models.Board
         /// <returns> </returns>
         public TileInfo GetTileInfo(Position pos)
         {
-            Tile tile = GetTile(pos);
-
-            if (tile != null)
-                return new TileInfo(pos, tile.Piece != null);
-
-            return default;
+            return GetTile(pos);
         }
 
         public ChessPiece GetPiece(Position pos)
@@ -237,11 +234,21 @@ namespace Chess.Models.Board
             return GetTile(pos)?.Piece;
         }
 
+        /// <summary>
+        /// Returns all pieces that belong to the given player
+        /// </summary>
+        /// <param name="player"> </param>
+        /// <returns> </returns>
         public List<ChessPiece> GetAllPieces(Player player = default)
         {
             return PieceLists[player];
         }
 
+        /// <summary>
+        /// Returns all moves from the given player. Doesn't remove moves that leave the King in Check
+        /// </summary>
+        /// <param name="player"> </param>
+        /// <returns> </returns>
         public Dictionary<ChessPiece, List<Move>> GetAllMoves(Player player = default)
         {
             var movesDict = new Dictionary<ChessPiece, List<Move>>();
@@ -264,6 +271,11 @@ namespace Chess.Models.Board
             return new BoardState(this.BoardState);
         }
 
+        /// <summary>
+        /// Returns true if the BoardState of the other board is equal to this one
+        /// </summary>
+        /// <param name="other"> </param>
+        /// <returns> </returns>
         public bool CompareBoardStates(Chessboard other)
         {
             if (other == null)
@@ -339,7 +351,7 @@ namespace Chess.Models.Board
                 {
                     foreach (var capture in move.Captures)
                     {
-                        var tile = GetTile(capture);
+                        var tile = GetTile(capture.Position);
                         if (tile?.Piece is King)
                             return true;
                     }
@@ -361,8 +373,7 @@ namespace Chess.Models.Board
                    Height == other.Height &&
                    EqualityComparer<BoardState>.Default.Equals(BoardState, other.BoardState) &&
                    EqualityComparer<Stack<IChessAction>>.Default.Equals(ActionHistory, other.ActionHistory) &&
-                   EqualityComparer<Stack<IChessAction>>.Default.Equals(ActionCache, other.ActionCache) &&
-                   EqualityComparer<Stack<ChessPiece>>.Default.Equals(RemovedPieces, other.RemovedPieces);
+                   EqualityComparer<Stack<IChessAction>>.Default.Equals(ActionCache, other.ActionCache);
         }
 
         public override int GetHashCode()
@@ -373,7 +384,6 @@ namespace Chess.Models.Board
             hashCode = hashCode * -1521134295 + EqualityComparer<BoardState>.Default.GetHashCode(BoardState);
             hashCode = hashCode * -1521134295 + EqualityComparer<Stack<IChessAction>>.Default.GetHashCode(ActionHistory);
             hashCode = hashCode * -1521134295 + EqualityComparer<Stack<IChessAction>>.Default.GetHashCode(ActionCache);
-            hashCode = hashCode * -1521134295 + EqualityComparer<Stack<ChessPiece>>.Default.GetHashCode(RemovedPieces);
             return hashCode;
         }
 
